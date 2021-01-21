@@ -14,10 +14,12 @@ function CreatePostForm() {
     fetch(query)
       .then((data) => data.json())
       .then((data) => {
-        dispatch({
-          type: RENDER_RESULTS,
-          payload: data,
-        });
+        if (data.length > 0) {
+          dispatch({
+            type: RENDER_RESULTS,
+            payload: data,
+          });
+        }
       })
       .catch((err) => console.log(err));
 

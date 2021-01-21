@@ -37,7 +37,10 @@ const FavoritesList = () => {
       {state.savedBooks.length ? (
         <div>
           {state.savedBooks.map((item) => (
-            <div className="d-flex flex-wrap mb-5 border border-success">
+            <div
+              key={item._id + 2}
+              className="d-flex flex-wrap mb-5 border border-success"
+            >
               <Card
                 key={item._id}
                 style={{ width: "17rem" }}
@@ -53,7 +56,7 @@ const FavoritesList = () => {
                   className="ml-5 mb-2"
                 />
               </Card>
-              <Card.Body style={{ width: "18rem" }}>
+              <Card.Body key={item._id + 1} style={{ width: "18rem" }}>
                 <div className="float-right">
                   <Button
                     href={item.link}
