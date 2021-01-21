@@ -1,51 +1,86 @@
 import React, { useEffect } from "react";
-import { ListItem, List } from "../components/List";
-import DeleteBtn from "../components/DeleteBtn";
+
 import { Link } from "react-router-dom";
 import { useStoreContext } from "../utils/GlobalState";
-import { REMOVE_FAVORITE, LOADING, UPDATE_FAVORITES } from "../utils/actions";
+import { REMOVE_FAVORITE, GET_FAVORITE } from "../utils/actions";
+import API from "../utils/API";
+import { Card, Button } from "react-bootstrap";
 
 const FavoritesList = () => {
   const [state, dispatch] = useStoreContext();
 
   const getFavorites = () => {
-    dispatch({ type: LOADING });
-    dispatch({ type: UPDATE_FAVORITES });
+    API.getAllBooks({}).then(({ data }) =>
+      dispatch({
+        type: GET_FAVORITE,
+        data: data,
+      })
+    );
   };
 
-  const removeFromFavorites = id => {
-    dispatch({
-      type: REMOVE_FAVORITE,
-      _id: id
-    });
+  const removeFromFavorites = (id) => {
+    API.deleteBook(id).then(({ data }) =>
+      dispatch({
+        type: REMOVE_FAVORITE,
+        data: { data, state },
+      })
+    );
   };
 
   useEffect(() => {
     getFavorites();
-  }, []);
+  }, [state.savedBooks]);
 
   return (
-    <div className="container mb-5 mt-5">
-      <h1 className="text-center">Here's All of Your Favorite Posts</h1>
-      {state.favorites.length ? (
-        <List>
-          <h3 className="mb-5 mt-5">Click on a post to view in detail</h3>
-          {state.favorites.map(post => (
-            <ListItem key={post._id}>
-              <Link to={"/posts/" + post._id}>
-                <strong>
-                  {post.title} by {post.author}
-                </strong>
-              </Link>
-              <DeleteBtn onClick={() => removeFromFavorites(post._id)} />
-            </ListItem>
+    <div className="col-sm-12">
+      <h1 className="text-center">Here's All of Your Favorite Books</h1>
+      {state.savedBooks.length ? (
+        <div>
+          {state.savedBooks.map((item) => (
+            <div className="d-flex flex-wrap mb-5 border border-success">
+              <Card
+                key={item._id}
+                style={{ width: "17rem" }}
+                className="border-end-success"
+              >
+                <Card.Title className="mb-4 ml-2">
+                  {item.title} by {item.authors}
+                </Card.Title>
+                <Card.Img
+                  style={{ width: "10rem" }}
+                  variant="top"
+                  src={item.image}
+                  className="ml-5 mb-2"
+                />
+              </Card>
+              <Card.Body style={{ width: "18rem" }}>
+                <div className="float-right">
+                  <Button
+                    href={item.link}
+                    target="_blank"
+                    variant="primary"
+                    style={{ marginRight: "10px" }}
+                  >
+                    View
+                  </Button>
+                  <Button
+                    variant="primary"
+                    onClick={() => removeFromFavorites(item._id)}
+                  >
+                    Delete
+                  </Button>
+                  <br></br>
+                </div>
+                <Card.Text className="mt-5">{item.description}</Card.Text>
+              </Card.Body>
+            </div>
           ))}
-        </List>
+        </div>
       ) : (
         <h3>You haven't added any favorites yet!</h3>
       )}
       <div className="mt-5">
-        <Link to="home">Back to home</Link>
+        <Link to="/">Back to home</Link>
       </div>
     </div>
   );

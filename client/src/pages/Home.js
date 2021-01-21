@@ -1,19 +1,19 @@
 import React from "react";
 import { Col, Row, Container } from "../components/Grid";
-import CreatePostForm from "../components/CreatePostForm";
+import CreatePostForm from "../components/BookSearchForm";
 import PostsList from "../components/PostsList";
 
 const Home = () => {
   return (
     <Container fluid>
       <Row>
-        <Col size="md-6">
+        <Col size="md">
           <CreatePostForm />
         </Col>
-        <Col size="md-6 sm-12">
-          <PostsList />
-        </Col>
       </Row>
+      <Col size="sm-12">
+        <PostsList />
+      </Col>
     </Container>
   );
 };

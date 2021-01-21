@@ -1,15 +1,17 @@
 import React from "react";
-import { useStoreContext } from "../../utils/GlobalState";
 
 function Nav() {
-  const [store] = useStoreContext();
-
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <a className="navbar-brand" href="/">
-        Your personal CMS
+        Google Books
       </a>
-      {store.loading ? <a className="navbar-brand ml-auto">Loading...</a> : <></>}
+      <a className="navbar-brand" href="/">
+        Search
+      </a>
+      <a className="navbar-brand" href="/saved">
+        Saved
+      </a>
     </nav>
   );
 }

@@ -3,11 +3,11 @@ import {
   SET_CURRENT_POST,
   REMOVE_POST,
   UPDATE_POSTS,
-  ADD_POST,
-  ADD_FAVORITE,
+  RENDER_RESULTS,
+  GET_FAVORITE,
   UPDATE_FAVORITES,
   REMOVE_FAVORITE,
-  LOADING
+  LOADING,
 } from "./actions";
 
 const StoreContext = createContext();
@@ -15,79 +15,80 @@ const { Provider } = StoreContext;
 
 const reducer = (state, action) => {
   switch (action.type) {
-  case SET_CURRENT_POST:
-    return {
-      ...state,
-      currentPost: action.post,
-      loading: false
-    };
+    case SET_CURRENT_POST:
+      return {
+        ...state,
+        currentPost: action.post,
+        loading: false,
+      };
 
-  case UPDATE_POSTS:
-    return {
-      ...state,
-      posts: [...action.posts],
-      loading: false
-    };
+    case UPDATE_POSTS:
+      return {
+        ...state,
+        posts: [...action.posts],
+        loading: false,
+      };
 
-  case ADD_POST:
-    return {
-      ...state,
-      posts: [action.post, ...state.posts],
-      loading: false
-    };
+    case RENDER_RESULTS:
+      // console.log(action.payload);
 
-  case REMOVE_POST:
-    return {
-      ...state,
-      posts: state.posts.filter((post) => {
-        return post._id !== action._id; 
-      })
-    };
+      return {
+        ...state,
+        searchResults: action.payload.items,
+      };
 
-  case ADD_FAVORITE:
-    return {
-      ...state,
-      favorites: [action.post, ...state.favorites],
-      loading: false
-    };
+    case REMOVE_POST:
+      return {
+        ...state,
+        posts: state.posts.filter((post) => {
+          return post._id !== action._id;
+        }),
+      };
 
-  case UPDATE_FAVORITES:
-    return {
-      ...state,
-      favorites: [...state.favorites],
-      loading: false
-    };
+    case GET_FAVORITE:
+      return {
+        ...state,
+        savedBooks: action.data,
+      };
 
-  case REMOVE_FAVORITE:
-    return {
-      ...state,
-      favorites: state.favorites.filter((post) => {
-        return post._id !== action._id; 
-      })
-    };
+    case UPDATE_FAVORITES:
+      return {
+        ...state,
+        favorites: [...state.favorites],
+        loading: false,
+      };
 
-  case LOADING:
-    return {
-      ...state,
-      loading: true
-    };
+    case REMOVE_FAVORITE:
+      return {
+        ...state,
+        savedBooks: action.data.state.savedBooks.filter((item) => {
+          return item._id !== action.data._id;
+        }),
+      };
 
-  default:
-    return state;
+    case LOADING:
+      return {
+        ...state,
+        loading: true,
+      };
+
+    default:
+      return state;
   }
 };
 
 const StoreProvider = ({ value = [], ...props }) => {
   const [state, dispatch] = useReducer(reducer, {
-    posts: [],
-    currentPost: {
+    searchResults: [],
+    currentResults: {
       _id: 0,
       title: "",
-      body: "",
-      author: ""
+      authors: "",
+      description: "",
+      image: "",
+      link: "",
     },
-    favorites: [],
-    loading: false
+    savedBooks: [],
   });
 
   return <Provider value={[state, dispatch]} {...props} />;
