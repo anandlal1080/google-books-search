@@ -1,38 +1,50 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Link } from "react-router-dom";
 import { useStoreContext } from "../../utils/GlobalState";
-
+import { GET_FAVORITE } from "../../utils//actions";
 import API from "../../utils/API";
 import { Card, Button } from "react-bootstrap";
 
 function PostsList() {
-  const [state] = useStoreContext();
+  const [state, dispatch] = useStoreContext();
 
-  const handleSave = (value) => {
-    const book = value.volumeInfo;
+  const getFavorites = () => {
+    console.log("get favs");
+    API.getAllBooks({}).then(({ data }) =>
+      dispatch({
+        type: GET_FAVORITE,
+        data: data,
+      })
+    );
+  };
+  useEffect(getFavorites, []);
+
+  const handleSave = (book) => {
     API.saveBook({
-      title: book.title,
-      authors: book.authors[0],
-      description: book.description,
-      image: book.imageLinks.thumbnail,
-      link: book.infoLink,
-    }).catch((err) => console.log(err));
+      title: book.volumeInfo.title,
+      authors: book.volumeInfo.authors[0],
+      description: book.volumeInfo.description,
+      image: book.volumeInfo.imageLinks.thumbnail,
+      link: book.volumeInfo.infoLink,
+      etag: book.etag,
+    })
+      .then(() => getFavorites())
+      .catch((err) => console.log(err));
   };
 
   return (
     <div>
-      <h1>All Blog Posts</h1>
-      <h3 className="mb-5 mt-5">Click on a post to view</h3>
+      <h1>All Searched Books</h1>
+
       {state.searchResults.length ? (
         <>
           {state.searchResults.map((item) => (
-            <div className="d-flex flex-wrap mb-5 border border-success">
-              <Card
-                key={item._id}
-                style={{ width: "17rem" }}
-                className="border-end-success"
-              >
+            <div
+              key={item.etag}
+              className="d-flex flex-wrap mb-5 border border-success"
+            >
+              <Card style={{ width: "17rem" }} className="border-end-success">
                 <Card.Title className="mb-4 ml-2">
                   {item.volumeInfo.title} by {item.volumeInfo.authors}
                 </Card.Title>
@@ -59,18 +71,15 @@ function PostsList() {
                   <br></br>
                 </div>
                 <Card.Text className="mt-5">
-                  {item.volumeInfo.description}
+                  {item.volumeInfo.description || "No description Available"}
                 </Card.Text>
               </Card.Body>
             </div>
           ))}
         </>
       ) : (
-        <h3>You haven't added any posts yet!</h3>
+        <h3>You haven't searched for books as yet</h3>
       )}
-      <div className="mt-5">
-        <Link to="favorites">View favorites</Link>
-      </div>
     </div>
   );
 }

@@ -74,7 +74,9 @@ const FavoritesList = () => {
                   </Button>
                   <br></br>
                 </div>
-                <Card.Text className="mt-5">{item.description}</Card.Text>
+                <Card.Text className="mt-5">
+                  {item.description || "No description Available"}
+                </Card.Text>
               </Card.Body>
             </div>
           ))}

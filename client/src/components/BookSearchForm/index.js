@@ -14,6 +14,7 @@ function CreatePostForm() {
     fetch(query)
       .then((data) => data.json())
       .then((data) => {
+        console.log(data);
         if (data.items.length > 0) {
           dispatch({
             type: RENDER_RESULTS,
